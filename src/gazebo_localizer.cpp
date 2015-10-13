@@ -6,7 +6,7 @@
 
 int main(int argc, char **argv)
 {
-      ros::init(argc, argv, "Guard");
+      ros::init(argc, argv, "gazebo_loc");
                   
       // Info From Launch File
       
@@ -15,7 +15,7 @@ int main(int argc, char **argv)
       ros::NodeHandle l_node("~");
       if ( l_node.getParam("robot_name", l_name) )
       {
-	  ROS_INFO("Nome ricevuto: %s", l_name.c_str());
+	  ROS_INFO("Gazebo Localizer Nome ricevuto: %s", l_name.c_str());
       }
       else
       {
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
       std::string l_pub_name = "SimulatorLocalizer_";
       l_pub_name += l_name;
       
-      ros::Publisher l_posePub = l_node.advertise<geometry_msgs::Twist>(l_pub_name.c_str(), 10);
+      ros::Publisher l_posePub = l_node.advertise<geometry_msgs::Pose>(l_pub_name.c_str(), 10);
       ros::ServiceClient l_clientGet = l_node.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state"); 
       gazebo_msgs::GetModelState l_getmodelstate;
       l_getmodelstate.request.model_name = l_name;
@@ -41,7 +41,10 @@ int main(int argc, char **argv)
       {
 	  if( l_clientGet.call(l_getmodelstate) )
 	  {
-	    l_posePub.publish<geometry_msgs::Pose>(l_getmodelstate.response.pose);
+	    if (l_getmodelstate.response.success)
+	      l_posePub.publish<geometry_msgs::Pose>(l_getmodelstate.response.pose);
+	    else
+	      ROS_INFO("Model %s not found!", l_name.c_str());
 	  }
 	  else
 	  {
