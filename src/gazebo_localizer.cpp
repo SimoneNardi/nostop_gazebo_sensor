@@ -26,7 +26,7 @@ int main(int argc, char **argv)
       }
       
       ///
-      std::string l_pub_name = "SimulatorLocalizer_";
+      std::string l_pub_name = "/simulator/localizer/";
       l_pub_name += l_name;
       
       ros::Publisher l_posePub = l_node.advertise<geometry_msgs::Pose>(l_pub_name.c_str(), 10);
@@ -42,7 +42,13 @@ int main(int argc, char **argv)
 	  if( l_clientGet.call(l_getmodelstate) )
 	  {
 	    if (l_getmodelstate.response.success)
+	    {
 	      l_posePub.publish<geometry_msgs::Pose>(l_getmodelstate.response.pose);
+	      ROS_DEBUG("Publish postion of %s: [%f, %f ,%f]", l_name.c_str(), 
+		       (double)l_getmodelstate.response.pose.position.x, 
+		       (double)l_getmodelstate.response.pose.position.y, 
+		       (double)l_getmodelstate.response.pose.position.z);
+	    }
 	    else
 	      ROS_INFO("Model %s not found!", l_name.c_str());
 	  }
