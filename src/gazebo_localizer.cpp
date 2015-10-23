@@ -26,8 +26,9 @@ int main(int argc, char **argv)
       }
       
       ///
-      std::string l_pub_name = "/simulator/localizer/";
+      std::string l_pub_name = "/";
       l_pub_name += l_name;
+      l_pub_name += "/gazebo/localizer";
       
       ros::Publisher l_posePub = l_node.advertise<geometry_msgs::Pose>(l_pub_name.c_str(), 10);
       ros::ServiceClient l_clientGet = l_node.serviceClient<gazebo_msgs::GetModelState>("/gazebo/get_model_state"); 
