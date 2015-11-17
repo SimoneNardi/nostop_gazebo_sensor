@@ -1,0 +1,7 @@
+<launch>
+  
+  <node pkg="nostop_gazebo_sensor" type="nostop_gazebo_sensor_node" name="$(anon GazeboLocalizer_red_blue)" required="true" output="screen">
+    <param name="robot_name" value="$(optenv ROS_ROBOT_NAME red_blue)" />
+  </node>
+  
+</launch>
