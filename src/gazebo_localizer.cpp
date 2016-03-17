@@ -4,6 +4,8 @@
 
 #include <cstdlib>
 
+#include "StaticTransformPublisher.h"
+
 int main(int argc, char **argv)
 {
       ros::init(argc, argv, "gazebo_loc");
@@ -35,8 +37,12 @@ int main(int argc, char **argv)
       gazebo_msgs::GetModelState l_getmodelstate;
       l_getmodelstate.request.model_name = l_name;
             
-      ros::Rate loop_rate(5);
+      ros::Rate loop_rate(10);
     
+      bool l_static_transform_initialized = false;
+      
+      StaticTransformPublisher l_tf(l_getmodelstate.request.model_name);
+      
       int count = 0;
       while (ros::ok())
       {
@@ -44,6 +50,13 @@ int main(int argc, char **argv)
 	  {
 	    if (l_getmodelstate.response.success)
 	    {
+	      if(!l_static_transform_initialized)
+	      {
+		l_tf.setPose(l_getmodelstate.response.pose);
+		l_tf.start();
+		l_static_transform_initialized = true;
+	      }
+	      
 	      l_posePub.publish<geometry_msgs::Pose>(l_getmodelstate.response.pose);
 	      ROS_DEBUG("Publish postion of %s: [%f, %f ,%f]", l_name.c_str(), 
 		       (double)l_getmodelstate.response.pose.position.x, 
@@ -55,7 +68,7 @@ int main(int argc, char **argv)
 	  }
 	  else
 	  {
-	    ROS_ERROR("Failed to call service ");
+	    ROS_ERROR("Failed to call service");
 	    return -1;
 	  }
 	  	  
@@ -64,4 +77,6 @@ int main(int argc, char **argv)
 	  loop_rate.sleep();
 	  ++count;
       }
+      
+      l_tf.stop();
  }
