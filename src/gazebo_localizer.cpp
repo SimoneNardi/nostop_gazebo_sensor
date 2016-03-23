@@ -38,9 +38,19 @@ int main(int argc, char **argv)
       l_getmodelstate.request.model_name = l_name;
             
       ros::Rate loop_rate(10);
-    
+          
       bool l_static_transform_initialized = false;
       
+      geometry_msgs::Pose l_start;
+      l_start.position.x = 0;
+      l_start.position.y = 0;
+      l_start.position.z = 0;
+      
+      l_start.orientation.x = 0;
+      l_start.orientation.y = 0;
+      l_start.orientation.z = 0;
+      l_start.orientation.w = 1;
+            
       StaticTransformPublisher l_tf(l_getmodelstate.request.model_name);
       
       int count = 0;
@@ -52,7 +62,8 @@ int main(int argc, char **argv)
 	    {
 	      if(!l_static_transform_initialized)
 	      {
-		l_tf.setPose(l_getmodelstate.response.pose);
+		l_tf.setPose(l_start);
+		//l_tf.setPose(l_getmodelstate.response.pose);
 		l_tf.start();
 		l_static_transform_initialized = true;
 	      }

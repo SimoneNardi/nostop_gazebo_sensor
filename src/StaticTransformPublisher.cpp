@@ -56,5 +56,7 @@ void StaticTransformPublisher::run()
     m_tf_broadcaster.sendTransform(tf::StampedTransform(m_transform, ros::Time::now(), "/map", "/"+m_model_name+"/odom"));
     
     ros::spinOnce();
+    
+    loop_rate.sleep();
   }
 }
