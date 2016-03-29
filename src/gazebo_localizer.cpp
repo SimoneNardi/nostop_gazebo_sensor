@@ -15,8 +15,11 @@ int main(int argc, char **argv)
       // Identify robot name:
       std::string l_name;
       ros::NodeHandle l_node("~");
-      if ( l_node.getParam("robot_name", l_name) )
+      
+      std::string temp_name;
+      if ( l_node.searchParam("robot_name", temp_name) )
       {
+	  l_node.getParam(temp_name,l_name);
 	  ROS_INFO("Gazebo Localizer Nome ricevuto: %s", l_name.c_str());
       }
       else
